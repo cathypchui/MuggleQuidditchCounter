@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Zero DP. Do not change. Used for layout weights -->
+    <dimen name="zeroDp">0dp</dimen>
+    <!-- Padding above team names. -->
+    <dimen name="paddingTopTeams">16dp</dimen>
+    <!-- Text size to display team names. -->
+    <dimen name="teamTextSize">24sp</dimen>
+    <!-- Padding below scores of teams. -->
+    <dimen name="paddingBottomScore">24dp</dimen>
+    <!-- Padding above team scores -->
+    <dimen name="paddingTopScore">16dp</dimen>
+    <!-- Text size of scores -->
+    <dimen name="scoreTextSize">80sp</dimen>
+    <!-- Text size for text inside quaffle buttons. -->
+    <dimen name="buttonTextSize">24sp</dimen>
+    <!-- Margin between buttons and left edge of screen -->
+    <dimen name="buttonMargin">24dp</dimen>
+    <!-- Margin between quaffle and snitch buttons. -->
+    <dimen name="marginBetweenButtons">8dp</dimen>
+    <!-- Snitch button text size -->
+    <dimen name="snitchButtonTextSize">24sp</dimen>
+    <!-- Top margin between dividing line and top edge of screen -->
+    <dimen name="marginTopOfDividingLine">16dp</dimen>
+    <!-- Width of dividing line -->
+    <dimen name="widthOfDividingLine">1dp</dimen>
+    <!-- START PAGE RESOURCES -->
+    <!-- Padding to left of Team A and B textViews -->
+    <dimen name="startPageTeamLeftPadding">16dp</dimen>
+    <!-- Padding above Team A and B textViews -->
+    <dimen name="startPageTeamTopPadding">48dp</dimen>
+    <!-- Text size of Team A and B textViews -->
+    <dimen name="startPageTeamTextSize">32sp</dimen>
+    <!-- Padding of START MATCH button -->
+    <dimen name="startMatchButtonPadding">16dp</dimen>
+    <!-- LANDSCAPE MODE RESOURCES-->
+    <!-- Padding of START MATCH button in landscape mode-->
+    <dimen name="landscapeSubmitButtonPadding">5dp</dimen>
+    <!-- Horizontal Margin of RESET BUTTON in landscape mode-->
+    <dimen name="marginHorizontalResetButtonLandscape">240dp</dimen>
+    <!-- Vertical Margin of RESET BUTTON in landscape mode-->
+    <dimen name="marginVerticalResetButtonLandscape">8dp</dimen>
+    <dimen name="landscapeButtonMargin">8dp</dimen>
+    <dimen name="landscapePaddingBottomScore">8dp</dimen>
+    <dimen name="landscapePaddingTopScore">8dp</dimen>
+    <dimen name="landscapeButtonTextSize">16sp</dimen>
+</resources>

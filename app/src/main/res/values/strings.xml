@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Quidditch Counter</string>
+    <string name="teamAString">Team A</string>
+    <string name="zeroString">0</string>
+    <string name="quaffleButtonString">GOAL +10 points</string>
+    <string name="snitchButtonString">GOLDEN SNITCH  +30 POINTS   END MATCH</string>
+    <string name="teamBString">Team B</string>
+    <string name="resetString">Reset</string>
+    <string name="enterTeamNameString">Enter Team Name</string>
+    <string name="startMatchButtonString">Start Match</string>
+    <string name="contentDescriptionString">Quidditch Pitch</string>
+</resources>

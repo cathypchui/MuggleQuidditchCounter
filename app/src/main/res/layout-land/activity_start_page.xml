@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.quidditchcounter.startPage">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:scaleType="centerCrop"
+        android:src="@drawable/quidditchfield" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zeroDp"
+            android:orientation="horizontal"
+            android:layout_weight="8">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/garamond"
+                    android:paddingLeft="@dimen/startPageTeamLeftPadding"
+                    android:paddingTop="@dimen/startPageTeamTopPadding"
+                    android:text="@string/teamAString"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/startPageTeamTextSize" />
+
+                <EditText
+                    android:id="@+id/team_a_pick_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enterTeamNameString"
+                    android:paddingLeft="@dimen/startPageTeamLeftPadding"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/marginTopOfDividingLine"
+                android:background="@color/white" />
+
+            <LinearLayout
+                android:layout_width="@dimen/zeroDp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/garamond"
+                    android:paddingTop="@dimen/startPageTeamTopPadding"
+                    android:text="@string/teamBString"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/startPageTeamTextSize"
+                    android:paddingLeft="@dimen/startPageTeamLeftPadding" />
+
+                <EditText
+                    android:id="@+id/team_b_pick_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enterTeamNameString"
+                    android:paddingLeft="@dimen/startPageTeamLeftPadding"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+        </LinearLayout>
+        <Button
+            android:id="@+id/submit_team_names"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/zeroDp"
+            android:layout_weight="1"
+            android:layout_marginBottom="@dimen/marginBetweenButtons"
+            android:padding="@dimen/landscapeSubmitButtonPadding"
+            android:text="@string/startMatchButtonString"
+            android:textColor="@color/black"
+            android:fontFamily="@font/garamondbold"
+            android:background="@color/colorAccent"
+            android:layout_gravity="center_horizontal"
+            android:onClick="startMatch"/>
+    </LinearLayout>
+</RelativeLayout>
