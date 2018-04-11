@@ -39,9 +39,10 @@
     <!-- Horizontal Margin of RESET BUTTON in landscape mode-->
     <dimen name="marginHorizontalResetButtonLandscape">240dp</dimen>
     <!-- Vertical Margin of RESET BUTTON in landscape mode-->
-    <dimen name="marginVerticalResetButtonLandscape">8dp</dimen>
+    <dimen name="margVertMatchSumButtonLandscape">8dp</dimen>
     <dimen name="landscapeButtonMargin">8dp</dimen>
     <dimen name="landscapePaddingBottomScore">8dp</dimen>
     <dimen name="landscapePaddingTopScore">8dp</dimen>
     <dimen name="landscapeButtonTextSize">16sp</dimen>
+    <dimen name="marginBottomOfDividingLine">8dp</dimen>
 </resources>

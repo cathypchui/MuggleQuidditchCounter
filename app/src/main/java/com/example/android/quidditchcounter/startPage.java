@@ -5,10 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class startPage extends AppCompatActivity {
-    EditText teamA;
-    EditText teamB;
+    private EditText teamA;
+    private EditText teamB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +19,8 @@ public class startPage extends AppCompatActivity {
 
     }
     public void startMatch(View view){
+        Toast.makeText(startPage.this, R.string.obliviateToastString,
+                Toast.LENGTH_SHORT).show();
         String teamAName = teamA.getText().toString();
         String teamBName = teamB.getText().toString();
 
@@ -32,7 +35,12 @@ public class startPage extends AppCompatActivity {
         intent.putExtra("teamA", teamAName);
         intent.putExtra("teamB", teamBName);
         startActivity(intent);
+        finish();
     }
+
+    /**
+     * This saves the teams' names in case of orientation change.
+     */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         String nameOfTeamA = teamA.getText().toString();

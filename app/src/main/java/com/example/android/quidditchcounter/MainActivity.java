@@ -1,46 +1,91 @@
 package com.example.android.quidditchcounter;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
 
+
 public class MainActivity extends AppCompatActivity {
-    private int scoreTeamA;
+    int finalScoreMatchTeamA;
     private int scoreTeamB;
     private TextView textViewA;
     private TextView textViewB;
-    Button quaffleA;
-    Button quaffleB;
-    Button snitchA;
-    Button snitchB;
+    int finalScoreMatchTeamB;
+    String matchDuration;
+    /*
+     * Declaring variables
+     */
+    private int scoreTeamA;
+    private Button quaffleA;
     private TextView scoreViewA;
     private TextView scoreViewB;
+    private Button quaffleB;
+    private Button snitchA;
+    private Button snitchB;
+    private Button matchSummaryButton;
+    private Button obliviateButton;
+    private String timeWhenStopped;
+    private String snitchCatchAndResultsString;
     final private String teamAKey = "teamAscore";
     final private String teamBKey = "teamBscore";
-    private static final long START_TIME_IN_MILLIS = 300000;
+    /*
+     * Textview with the stopwatch starting at 00:00
+     */
+    private Chronometer stopwatch;
+    private long pauseOffset;
+    private boolean running;
 
-    private TextView mTextViewCountdown;
-    private Button mButtonStartPause;
-    private TextView mCountdownTitle;
+    private Button startPause;
 
-    private CountDownTimer mCountDownTimer;
+    private long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L;
 
-    private Boolean mTimerRunning = false;
+    private Handler handler;
 
-    private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
-    private long mEndTime;
+    private int Seconds, Minutes, MilliSeconds;
+    public Runnable runnable = new Runnable() {
+
+        public void run() {
+
+            MillisecondTime = SystemClock.uptimeMillis() - StartTime;
+
+            UpdateTime = TimeBuff + MillisecondTime;
+
+            Seconds = (int) (UpdateTime / 1000);
+
+            Minutes = Seconds / 60;
+
+            Seconds = Seconds % 60;
+
+            MilliSeconds = (int) (UpdateTime % 1000);
+
+            String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d:%03d", Minutes, Seconds, MilliSeconds);
+
+            stopwatch.setText(timeLeftFormatted);
+
+            handler.postDelayed(this, 0);
+        }
+
+    };
+    private Boolean stopwatchRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /*
+         * Initializing variables
+         */
         textViewA = findViewById(R.id.team_A_name);
         textViewB = findViewById(R.id.team_B_name);
         quaffleA = findViewById(R.id.tenPointsA);
@@ -49,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
         snitchB = findViewById(R.id.thirtyPointsB);
         scoreViewA = findViewById(R.id.team_a_score);
         scoreViewB = findViewById(R.id.team_b_score);
+        obliviateButton = findViewById(R.id.obliviate_button);
+        matchSummaryButton = findViewById(R.id.match_summary);
+        matchSummaryButton.setVisibility(View.GONE);
         Intent intent = getIntent();
         final String textViewALabel = intent.getStringExtra("teamA");
         final String textViewBLabel = intent.getStringExtra("teamB");
@@ -56,22 +104,98 @@ public class MainActivity extends AppCompatActivity {
         textViewB.setText(textViewBLabel);
         displayForTeamA(0);
         displayForTeamB(0);
-        mTextViewCountdown = findViewById(R.id.countdown);
-        mButtonStartPause = findViewById(R.id.countdown_start_pause);
-        mCountdownTitle = findViewById(R.id.countdownTitle);
-        mButtonStartPause.setOnClickListener(new View.OnClickListener() {
+        finalScoreMatchTeamA = 0;
+        finalScoreMatchTeamB = 0;
+        matchDuration = "00:00:00";
+        stopwatch = findViewById(R.id.stopwatch);
+        startPause = findViewById(R.id.start_pause_stopwatch);
+        handler = new Handler();
+        timeWhenStopped = "00:00:00";
+        startStopwatch();
+        startPause.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (mTimerRunning) {
-                    pauseTimer();
+            public void onClick(View view) {
+                if (stopwatchRunning) {
+                    /*
+                     * Pauses stopwatch if running, updates button to say START
+                     */
+                    stopwatchRunning = false;
+                    timeWhenStopped = stopwatch.getText().toString();
+                    TimeBuff += MillisecondTime;
+                    handler.removeCallbacks(runnable);
+                    quaffleA.setVisibility(View.GONE);
+                    quaffleB.setVisibility(View.GONE);
+                    snitchA.setVisibility(View.GONE);
+                    snitchB.setVisibility(View.GONE);
+                    updateButtons();
                 } else {
-                    startTimer();
+                    /*
+                     * Starts stopwatch if stopped, updates button to say PAUSE
+                     */
+                    startStopwatch();
+                    quaffleA.setVisibility(View.VISIBLE);
+                    quaffleB.setVisibility(View.VISIBLE);
+                    snitchA.setVisibility(View.VISIBLE);
+                    snitchB.setVisibility(View.VISIBLE);
                 }
+
             }
         });
-        mTextViewCountdown.setVisibility(View.GONE);
-        mButtonStartPause.setVisibility(View.GONE);
-        mCountdownTitle.setVisibility(View.GONE);
+    }
+
+    /*
+     * Pauses or starts stopwatch depending on whether stopwatch is running
+     * Changes text of startPause button to say START
+     *
+        }
+
+        /**
+         * Starts stopwatch (default upon onCreate of match to start counting match time
+         * Changes text of startPause button to say PAUSE
+         */
+    private void startStopwatch() {
+        stopwatchRunning = true;
+        StartTime = SystemClock.uptimeMillis();
+        handler.postDelayed(runnable, 0);
+        updateButtons();
+    }
+
+    /**
+     * Resets stopwatch (default upon OBLIVIATE tap)
+     */
+    private void resetStopwatch() {
+        MillisecondTime = 0L;
+        StartTime = 0L;
+        TimeBuff = 0L;
+        UpdateTime = 0L;
+        Seconds = 0;
+        Minutes = 0;
+        MilliSeconds = 0;
+
+        stopwatch.setText("00:00:00");
+        timeWhenStopped = stopwatch.getText().toString();
+
+    }
+
+    /**
+     * Pauses stopwatch, does not update startPause button (to be called when snitch is caught, ending game, or if there is a tie upon snitch catch)
+     * startPause button disappears
+     */
+    private void pauseStopwatch() {
+        stopwatchRunning = false;
+        TimeBuff += MillisecondTime;
+        handler.removeCallbacks(runnable);
+    }
+
+    /**
+     * Sets the visibility and text of stopwatch buttons.
+     */
+    private void updateButtons() {
+        if (stopwatchRunning) {
+            startPause.setText(R.string.pauseString);
+        } else {
+            startPause.setText(R.string.startString);
+        }
 
     }
 
@@ -87,44 +211,76 @@ public class MainActivity extends AppCompatActivity {
         scoreViewB.setText(String.valueOf(score));
     }
 
+    /*
+     * Increases and displays score when team A scores a quaffle goal
+     */
     public void displayTenPointsA(View view) {
         scoreTeamA = scoreTeamA + 10;
         displayForTeamA(scoreTeamA);
     }
 
+    /*
+     * Increases and displays score when team A gets the snitch
+     */
     public void displayThirtyPointsA(View view) {
+        /*
+         * Pauses the stopwatch
+         * Hides startPause button so that the user can't keep the clock running after the snitch is caught
+         */
+        pauseStopwatch();
+        startPause.setVisibility(View.GONE);
         scoreTeamA = scoreTeamA + 30;
         displayForTeamA(scoreTeamA);
+        /*
+         * Hides buttons for quaffle and snitch so that the scorekeeper can't change the score after the snitch is caught.
+         * Disables OBLIVIATE, as the match is over. User is instructed to proceed to view match summary, where they can reset.
+         */
         quaffleA.setVisibility(View.GONE);
         quaffleB.setVisibility(View.GONE);
         snitchA.setVisibility(View.GONE);
         snitchB.setVisibility(View.GONE);
+        obliviateButton.setVisibility(View.GONE);
+        saveScoresAndTimes();
+        /*
+         * if there is no tie, the game is over. The team with more points, wins.
+         */
         if (scoreTeamA > scoreTeamB) {
-            pauseTimer();
-            mTextViewCountdown.setVisibility(View.GONE);
-            mButtonStartPause.setVisibility(View.GONE);
-            mCountdownTitle.setVisibility(View.GONE);
-            Toast.makeText(MainActivity.this, textViewA.getText() + " got the Snitch! " + textViewA.getText() + " won the match! Press RESET",
+            finalScoreMatchTeamA = scoreTeamA;
+            finalScoreMatchTeamB = scoreTeamB;
+            matchDuration = stopwatch.getText().toString();
+            snitchCatchAndResultsString = textViewA.getText() + " got the Snitch! " + textViewA.getText() + " won the match!";
+            Toast.makeText(MainActivity.this, snitchCatchAndResultsString + " Proceed to MATCH SUMMARY",
                     Toast.LENGTH_LONG).show();
+            /*
+             * Makes matchSummaryButton appear
+             */
+            matchSummaryButton.setVisibility(View.VISIBLE);
         } else if (scoreTeamA == scoreTeamB) {
-            mTextViewCountdown.setVisibility(View.VISIBLE);
-            mButtonStartPause.setVisibility(View.VISIBLE);
-            mCountdownTitle.setVisibility(View.VISIBLE);
-            resetTimer();
-            startTimer();
+            finalScoreMatchTeamA = scoreTeamA;
+            finalScoreMatchTeamB = scoreTeamB;
+            matchDuration = stopwatch.getText().toString();
             Toast.makeText(MainActivity.this, "It's a tie! Proceed to overtime!",
                     Toast.LENGTH_LONG).show();
-            quaffleA.setVisibility(View.VISIBLE);
-            quaffleB.setVisibility(View.VISIBLE);
-            snitchA.setVisibility(View.VISIBLE);
-            snitchB.setVisibility(View.VISIBLE);
+            /*
+             * Resets scores and team names, makes quaffle and snitch buttons visible again.
+             * This method is called automatically when a snitch is caught to cause a tie)
+             */
+            resetScoresMethod();
+            /*
+             * intent to go to first overtime activity
+             */
+            proceedToFirstOvertime();
         } else {
-            pauseTimer();
-            mTextViewCountdown.setVisibility(View.GONE);
-            mButtonStartPause.setVisibility(View.GONE);
-            mCountdownTitle.setVisibility(View.GONE);
-            Toast.makeText(MainActivity.this, textViewA.getText() + " got the Snitch! " + textViewB.getText() + " won the match! Press RESET",
+            finalScoreMatchTeamA = scoreTeamA;
+            finalScoreMatchTeamB = scoreTeamB;
+            matchDuration = stopwatch.getText().toString();
+            snitchCatchAndResultsString = textViewB.getText() + " got the Snitch! " + textViewB.getText() + " won the match!";
+            Toast.makeText(MainActivity.this, snitchCatchAndResultsString + " Proceed to MATCH SUMMARY",
                     Toast.LENGTH_LONG).show();
+            /*
+             * Makes matchSummaryButton appear
+             */
+            matchSummaryButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -134,44 +290,83 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayThirtyPointsB(View view) {
+        pauseStopwatch();
         scoreTeamB = scoreTeamB + 30;
         displayForTeamB(scoreTeamB);
         quaffleA.setVisibility(View.GONE);
         quaffleB.setVisibility(View.GONE);
         snitchA.setVisibility(View.GONE);
         snitchB.setVisibility(View.GONE);
+        obliviateButton.setVisibility(View.GONE);
         if (scoreTeamA > scoreTeamB) {
-            pauseTimer();
-            mTextViewCountdown.setVisibility(View.GONE);
-            mButtonStartPause.setVisibility(View.GONE);
-            mCountdownTitle.setVisibility(View.GONE);
-            Toast.makeText(MainActivity.this, textViewB.getText() + " got the Snitch! " + textViewA.getText() + " won the match! Press RESET",
+            finalScoreMatchTeamA = scoreTeamA;
+            finalScoreMatchTeamB = scoreTeamB;
+            matchDuration = stopwatch.getText().toString();
+            snitchCatchAndResultsString = textViewB.getText() + " got the Snitch! " + textViewA.getText() + " won the match!";
+            Toast.makeText(MainActivity.this, snitchCatchAndResultsString + " Proceed to MATCH SUMMARY",
                     Toast.LENGTH_LONG).show();
+            /*
+             * Makes matchSummaryButton appear
+             */
+            matchSummaryButton.setVisibility(View.VISIBLE);
         } else if (scoreTeamA == scoreTeamB) {
-            mTextViewCountdown.setVisibility(View.VISIBLE);
-            mButtonStartPause.setVisibility(View.VISIBLE);
-            mCountdownTitle.setVisibility(View.VISIBLE);
-            resetTimer();
-            startTimer();
+            finalScoreMatchTeamA = scoreTeamA;
+            finalScoreMatchTeamB = scoreTeamB;
+            matchDuration = stopwatch.getText().toString();
             Toast.makeText(MainActivity.this, "It's a tie! Proceed to overtime!",
                     Toast.LENGTH_LONG).show();
-            quaffleA.setVisibility(View.VISIBLE);
-            quaffleB.setVisibility(View.VISIBLE);
-            snitchA.setVisibility(View.VISIBLE);
-            snitchB.setVisibility(View.VISIBLE);
+            /*
+             * Resets scores and team names, makes quaffle and snitch buttons visible again.
+             * This method is called automatically when a snitch is caught to cause a tie)
+             */
+            resetScoresMethod();
+            /*
+             * intent to go to first overtime activity
+             */
+            proceedToFirstOvertime();
         } else {
-            pauseTimer();
-            mTextViewCountdown.setVisibility(View.GONE);
-            mButtonStartPause.setVisibility(View.GONE);
-            mCountdownTitle.setVisibility(View.GONE);
-            Toast.makeText(MainActivity.this, textViewB.getText() + " got the Snitch! " + textViewB.getText() + " won the match! Press RESET",
+            finalScoreMatchTeamA = scoreTeamA;
+            finalScoreMatchTeamB = scoreTeamB;
+            matchDuration = stopwatch.getText().toString();
+            snitchCatchAndResultsString = textViewB.getText() + " got the Snitch! " + textViewB.getText() + " won the match!";
+            Toast.makeText(MainActivity.this, snitchCatchAndResultsString + " Proceed to MATCH SUMMARY",
                     Toast.LENGTH_LONG).show();
+            /*
+             * Makes matchSummaryButton appear
+             */
+            matchSummaryButton.setVisibility(View.VISIBLE);
         }
     }
 
-    public void resetScores(View view) {
-        pauseTimer();
-        resetTimer();
+    /*
+     * Saves scores of both teams and match times before they are reset and the activity is killed
+     */
+    private void saveScoresAndTimes() {
+        finalScoreMatchTeamA = scoreTeamA;
+        finalScoreMatchTeamB = scoreTeamB;
+        matchDuration = stopwatch.getText().toString();
+
+    }
+
+    /*
+     * Upon click of MATCH SUMMARY button,  resets scores and team names,
+     * makes startPause, quaffle, and snitch buttons visible again,
+     * allows user to proceed to matchSummary activity
+     * makes match summary button invisible once it is clicked (part of the reset process).
+     */
+    public void matchSummaryButtonOnClick(View view) {
+        resetScoresMethod();
+        matchSummaryButton.setVisibility(View.GONE);
+        proceedToMatchSummary();
+    }
+
+    /*
+     * Resets scores and team names, makes quaffle and snitch buttons visible again.
+     * Makes match summary button invisible
+     * Resets stopwatch and makes startPause button visible again
+     */
+    private void resetScoresMethod() {
+        startPause.setVisibility(View.VISIBLE);
         scoreTeamB = 0;
         scoreTeamA = 0;
         displayForTeamB(scoreTeamB);
@@ -180,9 +375,77 @@ public class MainActivity extends AppCompatActivity {
         quaffleB.setVisibility(View.VISIBLE);
         snitchA.setVisibility(View.VISIBLE);
         snitchB.setVisibility(View.VISIBLE);
-        mTextViewCountdown.setVisibility(View.GONE);
-        mButtonStartPause.setVisibility(View.GONE);
-        mCountdownTitle.setVisibility(View.GONE);
+        textViewA.setText(null);
+        textViewB.setText(null);
+        resetStopwatch();
+    }
+
+    /*
+     * Proceeds to firstOvertime activity with team names saved
+     */
+    private void proceedToFirstOvertime() {
+        String teamAName = textViewA.getText().toString();
+        String teamBName = textViewB.getText().toString();
+
+        if (teamAName.isEmpty() || teamAName.trim().length() == 0) {
+            teamAName = "Team A";
+        }
+        if (teamBName.isEmpty() || teamBName.trim().length() == 0) {
+            teamBName = "Team B";
+        }
+        Intent intent = new Intent(MainActivity.this, firstOvertime.class);
+        /*
+         * Carries over result statement, scores of both teams, and match duration to next activity
+         */
+        intent.putExtra("teamA", teamAName);
+        intent.putExtra("teamB", teamBName);
+        intent.putExtra("finalScoreMatchTeamALabel", finalScoreMatchTeamA);
+        intent.putExtra("finalScoreMatchTeamBLabel", finalScoreMatchTeamB);
+        intent.putExtra("matchDurationLabel", matchDuration);
+        startActivity(intent);
+        finish();
+    }
+
+    /*
+     * Proceeds to match summary page without saving team names
+     */
+    private void proceedToMatchSummary() {
+        String teamAName = textViewA.getText().toString();
+        String teamBName = textViewB.getText().toString();
+
+        if (teamAName.isEmpty() || teamAName.trim().length() == 0) {
+            teamAName = "Team A";
+        }
+        if (teamBName.isEmpty() || teamBName.trim().length() == 0) {
+            teamBName = "Team B";
+        }
+        Intent intent = new Intent(MainActivity.this, matchSummary.class);
+        /*
+         * Carries over result statement, scores of both teams, and match duration to next activity
+         */
+        intent.putExtra("teamA", teamAName);
+        intent.putExtra("teamB", teamBName);
+        intent.putExtra("finalScoreMatchTeamALabel", finalScoreMatchTeamA);
+        intent.putExtra("finalScoreMatchTeamBLabel", finalScoreMatchTeamB);
+        intent.putExtra("matchDurationLabel", matchDuration);
+        startActivity(intent);
+        finish();
+    }
+
+    /*
+     * Resets names of teams, resets scores to zero for both teams, returns to startPage, upon tap of OBLIVIATE
+     */
+    public void resetAndReturnToStart(View view) {
+        scoreTeamB = 0;
+        scoreTeamA = 0;
+        displayForTeamB(scoreTeamB);
+        displayForTeamA(scoreTeamA);
+        textViewA.setText(null);
+        textViewB.setText(null);
+        resetStopwatch();
+        Intent intent = new Intent(MainActivity.this, startPage.class);
+        startActivity(intent);
+        finish();
     }
 
     /**
@@ -190,11 +453,10 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putLong("millisLeft", mTimeLeftInMillis);
-        savedInstanceState.putBoolean("timerRunning", mTimerRunning);
-        savedInstanceState.putLong("endTime", mEndTime);
         savedInstanceState.putInt(teamAKey, scoreTeamA);
         savedInstanceState.putInt(teamBKey, scoreTeamB);
+        savedInstanceState.putString("stopwatchKey", stopwatch.getText().toString());
+        savedInstanceState.putBoolean("stopwatchRunningKey", stopwatchRunning);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -203,93 +465,13 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        mTimeLeftInMillis = savedInstanceState.getLong("millisLeft");
-        mTimerRunning = savedInstanceState.getBoolean("timerRunning");
-        updateCountDownText();
-        updateButtons();
-
-        if(mTimerRunning){
-            mEndTime = savedInstanceState.getLong("endTime");
-            mTimeLeftInMillis = mEndTime - System.currentTimeMillis();
-            startTimer();
-        }
         scoreTeamA = savedInstanceState.getInt(teamAKey);
         scoreTeamB = savedInstanceState.getInt(teamBKey);
-
         scoreViewA.setText(String.valueOf(scoreTeamA));
         scoreViewB.setText(String.valueOf(scoreTeamB));
-    }
-
-    /**
-     * Starts timer.
-     */
-    private void startTimer() {
-        mEndTime = System.currentTimeMillis() + mTimeLeftInMillis;
-
-        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                mTimeLeftInMillis = millisUntilFinished;
-                updateCountDownText();
-            }
-
-            @Override
-            public void onFinish() {
-                mTimerRunning = false;
-                updateButtons();
-            }
-        }.start();
-
-        mTimerRunning = true;
+        stopwatch.setText(savedInstanceState.getString("stopwatchKey"));
+        Boolean stopwatchRunningState = savedInstanceState.getBoolean("stopwatchRunningKey");
+        stopwatchRunning = !stopwatchRunningState;
         updateButtons();
-
-    }
-
-    /**
-     * Pauses timer.
-     */
-    private void pauseTimer() {
-        mCountDownTimer.cancel();
-        mTimerRunning = false;
-        updateButtons();
-    }
-
-    /**
-     * Resets timer to starting point.
-     */
-    private void resetTimer() {
-        mTimeLeftInMillis = START_TIME_IN_MILLIS;
-        updateCountDownText();
-        updateButtons();
-    }
-
-    /**
-     * Updates countdown textview for each tick of timer.
-     */
-    private void updateCountDownText() {
-        int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
-        int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
-
-        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-
-        mTextViewCountdown.setText(timeLeftFormatted);
-    }
-
-    /**
-     * Sets the visibility and text of timer buttons.
-     */
-    private void updateButtons() {
-        if (mTimerRunning) {
-            mButtonStartPause.setText("Pause");
-        } else {
-            mButtonStartPause.setText("Start");
-
-            if (mTimeLeftInMillis < 1000) {
-                mButtonStartPause.setVisibility(View.INVISIBLE);
-            } else {
-                mButtonStartPause.setVisibility(View.VISIBLE);
-            }
-        }
-
     }
 }

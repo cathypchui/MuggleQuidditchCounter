@@ -9,18 +9,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-            android:label="Quidditch Scorekeeper">
-
-        </activity>
-        <activity android:name=".startPage"
-            android:label="Who's Playing?">
+        <activity
+            android:name=".MainActivity"
+            android:label="Quidditch Scorekeeper" />
+        <activity
+            android:name=".startPage"
+            android:label="Start Page- Who&apos;s Playing?">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".firstOvertime"
+            android:label="Quidditch Scorekeeper- First Overtime" />
+        <activity
+            android:name=".secondOvertime"
+            android:label="Quidditch Scorekeeper- Second Overtime" />
+        <activity
+            android:name=".matchSummary"
+            android:label="Match Summary" />
     </application>
 
 </manifest>

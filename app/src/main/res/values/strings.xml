@@ -2,11 +2,17 @@
     <string name="app_name">Quidditch Counter</string>
     <string name="teamAString">Team A</string>
     <string name="zeroString">0</string>
-    <string name="quaffleButtonString">GOAL +10 points</string>
-    <string name="snitchButtonString">GOLDEN SNITCH  +30 POINTS   END MATCH</string>
+    <string name="quaffleButtonString">QUAFFLE</string>
+    <string name="snitchButtonString">GOLDEN SNITCH</string>
     <string name="teamBString">Team B</string>
-    <string name="resetString">Reset</string>
+    <string name="matchSummaryButtonString">Match Summary</string>
     <string name="enterTeamNameString">Enter Team Name</string>
     <string name="startMatchButtonString">Start Match</string>
     <string name="contentDescriptionString">Quidditch Pitch</string>
+    <string name="pauseString">Pause</string>
+    <string name="startString">Start</string>
+    <string name="resetString">reset</string>
+    <string name="obliviateToastString">Brooms up! BACK button exits app with no data saved. OBLIVIATE returns you to the start page.</string>
+    <string name="obliviateString">Obliviate</string>
+    <string name="stopString">Stop</string>
 </resources>

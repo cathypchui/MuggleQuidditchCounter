@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.quidditchcounter.matchSummary">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:scaleType="centerCrop"
+        android:src="@drawable/quidditchfield" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/match_results_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zeroDp"
+            android:layout_weight="1"
+            android:text="Results of Match" />
+
+        <TextView
+            android:id="@+id/match_summary_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zeroDp"
+            android:layout_weight="1"
+            android:text="Summary" />
+
+        <TextView
+            android:id="@+id/match_duration_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zeroDp"
+            android:layout_weight="1"
+            android:text="Match duration" />
+
+        <TextView
+            android:id="@+id/score_team_A_name_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zeroDp"
+            android:layout_weight="1"
+            android:text="Team A" />
+
+        <TextView
+            android:id="@+id/score_team_A_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zeroDp"
+            android:layout_weight="1"
+            android:text="Score of Team A" />
+
+        <TextView
+            android:id="@+id/score_team_B_name_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zeroDp"
+            android:layout_weight="1"
+            android:text="Team B" />
+
+        <TextView
+            android:id="@+id/score_team_B_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zeroDp"
+            android:layout_weight="1"
+            android:text="Score of Team B" />
+
+        <Button
+            android:id="@+id/reset_and_return_to_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/marginBetweenButtons"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:fontFamily="@font/garamondbold"
+            android:onClick="resetAndReturn"
+            android:padding="@dimen/landscapeSubmitButtonPadding"
+            android:text="@string/resetString"
+            android:textColor="@color/black" />
+    </LinearLayout>
+</RelativeLayout>
